@@ -12,13 +12,16 @@ function SignUp(){
         console.log(user.uid);
         var firebaseRef = db.collection("users");
         const userData = {
-          name : "demoName",
           email : email,
-          password : password
+          firstLogin : true
         };
         firebaseRef.doc(user.uid).set(userData);
         setTimeout(function () {
-          window.location.replace("/login.html");
+          if(userData.firstLogin) {
+            window.location.replace("/captureData.html");
+          }else{
+            window.location.replace("/Profile.html")
+          }
         }, 1000);
       })
       .catch((error) => {
@@ -62,12 +65,17 @@ function GoogleSignIn(){
       const userData = {
         name: user.displayName,
         email: user.email,
+        firstLogin: true
       };
       firebaseRef.doc(user.uid).set(userData);
       console.log(token);
       console.log(user);
       setTimeout(function () {
-        window.location.replace("/Profile.html");
+        if(userData.firstLogin) {
+            window.location.replace("/captureData.html");
+          }else{
+            window.location.replace("/Profile.html");
+          }
       }, 1000);
     })
     .catch(function (error) {
@@ -115,3 +123,21 @@ firebase.auth().onAuthStateChanged(function (user) {
     // No user is signed in.
   }
 });
+
+function Save(){
+  const name = document.getElementById('username').value;
+  const bio = document.getElementById('bio').value;
+  const birthplace = document.getElementById("birthplace").value;
+  const user = firebase.auth().currentUser;
+  var firebaseRef = db.collection("users");
+  const userData = {
+    name: name,
+    bio : bio,
+    birthplace : birthplace,
+  };
+  firebaseRef.doc(user.uid).set(userData, {merge : true});
+  firebaseRef.doc(user.uid).update({firstLogin: false});
+  setTimeout(function () {
+    window.location.replace("/Profile.html");
+  }, 1000);
+}
