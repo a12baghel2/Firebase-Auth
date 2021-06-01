@@ -1,5 +1,5 @@
 
-//const db = firebase.firestore();
+const db = firebase.firestore();
 
 function SignUp(){
     const email = document.getElementById("email").value;
@@ -10,6 +10,13 @@ function SignUp(){
         // Signed in
         var user = userCredential.user;
         console.log(user.uid);
+        var firebaseRef = db.collection("users");
+        const userData = {
+          name : "demoName",
+          email : email,
+          password : password
+        };
+        firebaseRef.doc(user.uid).set(userData);
         setTimeout(function () {
           window.location.replace("/login.html");
         }, 1000);
@@ -31,13 +38,7 @@ function Login(){
       // Signed in
       var user = userCredential.user;
       console.log(user.uid);
-      const firebaseref = firebase.database().ref();
-      const userData = {
-        username : "DemoName",
-        userEmail : email,
-        userPassword : password
-      }
-      firebaseref.child(user.uid).set(userData)
+      
       setTimeout(function () {
         window.location.replace("/Profile.html");
       }, 1000);
@@ -57,9 +58,14 @@ function GoogleSignIn(){
     .then(function (result) {
       var token = result.credential.accessToken;
       var user = result.user;
-
+      var firebaseRef = db.collection("users");
+      const userData = {
+        name: user.displayName,
+        email: user.email,
+      };
+      firebaseRef.doc(user.uid).set(userData);
       console.log(token);
-      console.log(user.displayName);
+      console.log(user);
       setTimeout(function () {
         window.location.replace("/Profile.html");
       }, 1000);
@@ -86,3 +92,26 @@ function LogOut() {
       console.log(error);
     });
 }
+
+firebase.auth().onAuthStateChanged(function (user) {
+  if (user) {
+    console.log(user.uid);
+    const docRef = db.collection("users").doc(user.uid);
+    docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById('userName').innerHTML = data.name;
+          document.getElementById('userEmail').innerHTML = data.email;
+        } else {
+          console.log("No such document!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting document:", error);
+      });
+  } else {
+    // No user is signed in.
+  }
+});
