@@ -11,7 +11,8 @@ function SignUp(){
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log(user.uid);
+        var firebaseRef = db.collection("users");
+        //console.log(user.uid);
         const userData = {
           name : name,
           email : email,
@@ -41,8 +42,7 @@ function Login(){
     .then((userCredential) => {
       // Signed in
       var user = userCredential.user;
-      console.log(user.uid);
-      
+      //console.log(user.uid);
       setTimeout(function () {
         window.location.replace("/Profile.html");
       }, 1000);
@@ -84,8 +84,8 @@ function GoogleSignUp(){
         firstLogin: true,
       };
       firebaseRef.doc(user.uid).set(userData);
-      console.log(token);
-      console.log(user);
+      //console.log(token);
+      //console.log(user);
       setTimeout(function () {
         if (userData.firstLogin) {
           window.location.replace("/captureData.html");
@@ -137,6 +137,6 @@ function Save(){
   firebaseRef.doc(user.uid).set(userData, {merge : true});
   firebaseRef.doc(user.uid).update({firstLogin: false});
   setTimeout(function () {
-    window.location.replace("/Profile.html");
+    window.location.replace("/public/Profile.html");
   }, 1000);
 }

@@ -82,14 +82,14 @@
       const db = firebase.firestore();
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
-          console.log(user.uid);
+          //console.log(user.uid);
           const docRef = db.collection("users").doc(user.uid);
           docRef
             .get()
             .then((doc) => {
               if (doc.exists) {
                 const data = doc.data();
-                console.log(data);
+                //console.log(data);
                 document.getElementById("name").innerHTML = data.name;
                 document.getElementById("email").innerHTML = data.email;
                 document.getElementById("dob").innerHTML = data.dateOfBirth;
